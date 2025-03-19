@@ -8,16 +8,37 @@ const prisma = new PrismaClient();
 export const signUp = async (req, res, next) => {
     const { username, email, password } = req.body;
 
-    const hashedPassword = bcryptjs.hashSync(password, 10); 
+    if (!username || !email || !password) {
+        return next(errorHandler(400, "All fields are required"));
+    }
 
     try {
+        // Check if user with this email already exists
+        const existingUser = await prisma.user.findUnique({
+            where: { email },
+        });
+
+        if (existingUser) {
+            return next(errorHandler(409, "User with this email already exists"));
+        }
+
+        const hashedPassword = bcryptjs.hashSync(password, 10); 
+
         const newUser = await prisma.user.create({
             data: { username, email, password: hashedPassword },
         });
 
-        res.status(201).json({ message: "User created successfully", user: newUser });
+        // Exclude password from response
+        const { password: pass, ...userData } = newUser;
+
+        res.status(201).json({ 
+            success: true,
+            message: "User created successfully", 
+            user: userData 
+        });
     } catch (error) {
-        next(error);
+        console.error("Signup error:", error);
+        next(errorHandler(500, "Error during signup process"));
     }
 };
 

@@ -6,6 +6,8 @@ import Home from './pages/Home'
 import LogIn from './pages/LogIn'
 import SignUp from './pages/SignUp'
 import Donors from './pages/Donors'
+import DonorSearch from './pages/DonorSearch'
+import DonorFilter from './pages/DonorFilter'
 import Events from './pages/Events'
 import PrivateRoute from './components/PrivateRoute'
 import Settings from './pages/Settings'
@@ -35,6 +37,8 @@ function App() {
             </SidebarProvider>
           }>
             <Route path="/donors" element={<Donors />} />
+            <Route path="/donors/search" element={<DonorSearch />} />
+            <Route path="/donors/filter" element={<DonorFilter />} />
             <Route path="/events" element={<Events />} />
             <Route path="/settings" element={<Settings />} />
           </Route>

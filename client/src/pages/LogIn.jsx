@@ -45,8 +45,15 @@ export default function LogIn({ className, ...props }) {
         }),
       });
 
-      const data = await response.json();
-      console.log("Login API Response:", data);
+      let data;
+      try {
+        const text = await response.text();
+        data = text ? JSON.parse(text) : {};
+        console.log("Login API Response:", data);
+      } catch (parseError) {
+        console.error("JSON parsing error:", parseError);
+        throw new Error("Server response was not valid JSON");
+      }
 
       if (!response.ok) {
         throw new Error(data.message || "Failed to log in");
@@ -56,7 +63,7 @@ export default function LogIn({ className, ...props }) {
       navigate("/donors", { replace: true });
     } catch (err) {
       dispatch(signInFailure(err.message));
-      setError(err.message);
+      setError(err.message || "An error occurred during login");
     }
   };
 

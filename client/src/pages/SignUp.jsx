@@ -54,17 +54,25 @@ export default function SignUp({ className, ...props }) {
         }),
       });
 
-      const data = await response.json();
+      let data;
+      try {
+        const text = await response.text();
+        data = text ? JSON.parse(text) : {};
+        console.log("Signup response:", data);
+      } catch (parseError) {
+        console.error("JSON parsing error:", parseError);
+        throw new Error("Server response was not valid JSON");
+      }
 
       if (!response.ok) {
         throw new Error(data.message || "Failed to sign up");
       }
 
-      dispatch(signInSuccess(data));
+      dispatch(signInSuccess(data.user || data));
       navigate("/donors", { replace: true });
     } catch (err) {
       dispatch(signInFailure(err.message));
-      setError(err.message);
+      setError(err.message || "An error occurred during signup");
     }
   };
 
@@ -122,12 +130,11 @@ export default function SignUp({ className, ...props }) {
                       onChange={handleChange}
                     />
                     {error && (
-      <div className="mb-4 text-sm text-red-600 mt-3 flex items-center">
-      <FaCircleExclamation className="mr-2" />
-      {error}
-    </div>
-    
-                )}
+                      <div className="mb-4 text-sm text-red-600 mt-3 flex items-center">
+                        <FaCircleExclamation className="mr-2" />
+                        {error}
+                      </div>
+                    )}
                   </div>
                   <Button type="submit" className="w-full" disabled={loading}>
                     {loading ? "Creating account..." : "Sign Up"}
@@ -136,7 +143,6 @@ export default function SignUp({ className, ...props }) {
                 <div className="mt-4 text-center text-sm">
                   Already have an account?{" "}
                   <Link to="/login" className="underline underline-offset-4">Login</Link>
-
                 </div>
               </form>
             </CardContent>
