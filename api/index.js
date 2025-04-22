@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 const allowedOrigins = process.env.NODE_ENV === "production" 
-  ? ["https://your-frontend-domain.onrender.com"] 
+  ? ["https://https://five500-project-03-1.onrender.com"] 
   : ["http://localhost:5173"];
 
 app.use(cors({
