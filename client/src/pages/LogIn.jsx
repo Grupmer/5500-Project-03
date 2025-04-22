@@ -38,7 +38,8 @@ export default function LogIn({ className, ...props }) {
     dispatch(signInStart());
 
     try {
-      const response = await axios.post("/api/auth/login", {
+      const response = await axios.post(`${API_BASE_URL}/api/auth/login`, { // <-- 修改这里
+      // const response = await axios.post("/api/auth/login", {
         email: formData.email,
         password: formData.password,
       }, {
