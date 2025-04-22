@@ -1,7 +1,11 @@
 import axios from 'axios';
 
+// 获取环境变量中设置的后端 API 基础 URL
+// Vite 会在构建时将 import.meta.env.VITE_API_BASE_URL 替换为你在 .env 文件或 Render 环境变量中设置的实际值
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; 
+
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: API_BASE_URL, // <-- 修改这里，使用环境变量获取的后端基础 URL
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json'
