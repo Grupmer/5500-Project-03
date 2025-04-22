@@ -10,6 +10,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { signInStart, signInSuccess, signInFailure } from "../redux/auth/authSlice";
 import axios from "axios";
 
+// 导入环境变量
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 export default function LogIn({ className, ...props }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
