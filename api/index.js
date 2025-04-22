@@ -15,6 +15,9 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
+const allowedOrigins = process.env.NODE_ENV === "production" 
+  ? ["https://your-frontend-domain.onrender.com"] 
+  : ["http://localhost:5173"];
 
 app.use(cors({
     origin: "http://localhost:5173", 
@@ -22,12 +25,10 @@ app.use(cors({
     credentials: true,  
 }));
 
-const PORT = process.env.PORT;
-
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server is running on port ${PORT}`);
 });
-
 
 app.use('/api/auth', authRoutes);
 app.use('/api/donor', donorRoutes);
