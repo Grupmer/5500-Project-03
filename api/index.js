@@ -20,9 +20,18 @@ const allowedOrigins = process.env.NODE_ENV === "production"
   : ["http://localhost:5173"];
 
 app.use(cors({
-    origin: "http://localhost:5173", 
-    methods: "GET, POST, PUT, DELETE, OPTIONS",
-    credentials: true,  
+  origin: function (origin, callback) {
+    // 允许没有 origin 的请求 (比如 curl 命令或某些移动端请求)
+    if (!origin) return callback(null, true);
+    // 检查请求的 origin 是否在允许列表里
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = '跨域策略不允许来自此源的访问。'; // The CORS policy for this site does not allow access from the specified Origin.
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  methods: "GET, POST, PUT, DELETE, OPTIONS",
+  credentials: true, // 如果需要发送 cookie
 }));
 
 const PORT = process.env.PORT || 10000;
