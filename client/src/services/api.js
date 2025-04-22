@@ -14,36 +14,41 @@ const api = axios.create({
 
 export const donorApi = {
   // 获取所有捐赠者
-  getAllDonors: () => api.get('/donor'),
+  // 这里依然使用 '/donor' 相对路径，axios 会自动把它加在 baseURL 后面
+  getAllDonors: () => api.get('/api/donor'), // 注意这里需要加上 /api 前缀，因为后端路由是 /api/donor
   
   // 获取单个捐赠者详情
-  getDonorById: (id) => api.get(`/donor/${id}`),
+  getDonorById: (id) => api.get(`/api/donor/${id}`), // 同上，加上 /api
   
   // 创建捐赠者
-  createDonor: (data) => api.post('/donor', data),
+  createDonor: (data) => api.post('/api/donor', data), // 加上 /api
   
   // 更新捐赠者
-  updateDonor: (id, data) => api.put(`/donor/${id}`, data),
+  updateDonor: (id, data) => api.put(`/api/donor/${id}`, data), // 加上 /api
   
   // 删除捐赠者
-  deleteDonor: (id) => api.delete(`/donor/${id}`),
+  deleteDonor: (id) => api.delete(`/api/donor/${id}`), // 加上 /api
   
   // 推荐捐赠者
-  getRecommendedDonors: () => api.get('/donor/recommend')
+  getRecommendedDonors: () => api.get('/api/donor/recommend') // 加上 /api
 };
 
 export const tagApi = {
   // 获取所有标签
-  getAllTags: () => api.get('/tag'),
+  getAllTags: () => api.get('/api/tag'), // 加上 /api
   
   // 创建标签
-  createTag: (data) => api.post('/tag', data),
+  createTag: (data) => api.post('/api/tag', data), // 加上 /api
   
   // 更新标签
-  updateTag: (id, data) => api.patch(`/tag/${id}`, data),
+  updateTag: (id, data) => api.patch(`/api/tag/${id}`, data), // 加上 /api
   
   // 删除标签
-  deleteTag: (id) => api.delete(`/tag/${id}`)
+  deleteTag: (id) => api.delete(`/api/tag/${id}`) // 加上 /api
 };
 
-export default api; 
+// 你可能还有其他 API 模块或直接使用 api 实例的地方，都需要检查并加上 /api 前缀
+// 例如：api.post('/api/auth/login', ...)
+
+
+export default api; // 通常还是会导出这个实例，以防其他地方直接使用
