@@ -10,6 +10,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { signInStart, signInSuccess, signInFailure } from "../redux/auth/authSlice";
 import axios from "axios";
 
+// 导入环境变量
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 export default function SignUp({ className, ...props }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -43,7 +46,8 @@ export default function SignUp({ className, ...props }) {
     dispatch(signInStart());
 
     try {
-      const response = await axios.post("/api/auth/signup", {
+      const response = await axios.post(`${API_BASE_URL}/api/auth/signup`, { // <-- 修改这里
+      // const response = await axios.post("/api/auth/signup", {
         username: formData.name,
         email: formData.email,
         password: formData.password,
