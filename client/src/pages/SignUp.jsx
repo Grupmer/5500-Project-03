@@ -50,7 +50,10 @@ export default function SignUp({ className, ...props }) {
       });
     
       if (response.data) {
+        localStorage.setItem('token', response.data.token);
+
         dispatch(signInSuccess(response.data.user));
+    
         navigate("/donors", { replace: true });
       }
     } catch (err) {
