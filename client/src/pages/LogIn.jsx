@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { FaCircleExclamation } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
 import { signInStart, signInSuccess, signInFailure } from "../redux/auth/authSlice";
-import { apiClient } from "@/utils/axios";
+import apiClient from "@/utils/apiClient";
 
 export default function LogIn({ className, ...props }) {
   const navigate = useNavigate();
