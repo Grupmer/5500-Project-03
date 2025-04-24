@@ -39,8 +39,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { BarChart2 } from "lucide-react";
 
-axios.defaults.withCredentials = true;
-
 export default function DonorDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
