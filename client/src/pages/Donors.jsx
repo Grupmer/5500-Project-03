@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import apiClient from "@/utils/apiClient";
 import { useToast } from "@/components/ui/toast";
 import { debounce } from "lodash";
 import DonorFilters from "@/components/DonorFilters";
@@ -26,8 +26,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; 
 
 export default function Donors() {
   const navigate = useNavigate();
@@ -101,7 +99,8 @@ export default function Donors() {
           filters.tags.map(tag => typeof tag === 'object' ? tag.value : tag);
       }
 
-      const response = await axios.get(`${API_BASE_URL}/api/donor`, { params });
+      const response = await apiClient.get('/donor', { params });
+
       setDonors(response.data.donors);
       setPagination(response.data.pagination);
 
@@ -236,7 +235,7 @@ export default function Donors() {
         for (let i = 0; i < selectedDonors.length; i += batchSize) {
           const batch = selectedDonors.slice(i, i + batchSize);
           const batchPromises = batch.map(id => 
-            axios.delete(`${API_BASE_URL}/api/donor/${id}`)
+            apiClient.delete(`/donor/${id}`)
               .then(() => successCount++)
               .catch(() => failureCount++)
           );
@@ -288,7 +287,8 @@ export default function Donors() {
       
       for (let i = 0; i < selectedDonors.length; i += batchSize) {
         const batch = selectedDonors.slice(i, i + batchSize);
-        const batchRequests = batch.map(id => axios.get(`${API_BASE_URL}/api/donor/${id}`));
+        const batchRequests = batch.map(id => apiClient.get(`/donor/${id}`));
+
         
         try {
           const results = await Promise.all(batchRequests);

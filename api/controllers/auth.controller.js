@@ -48,12 +48,11 @@ export const logIn = async (req, res, next) => {
         });
 
         const { password: pass, ...rest } = validUser;
-
-        // ✅ 更新后的 Cookie 设置，支持跨域 & HTTPS
         res.cookie("access_token", token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',  // 生产环境启用 HTTPS
-            sameSite: 'None'                                // 允许跨域携带 Cookie
+            secure: process.env.NODE_ENV === 'production',  
+            sameSite: 'None',
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         }).status(200).json(rest);
 
     } catch (error) {
