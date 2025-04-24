@@ -196,17 +196,12 @@ export const updateEvent = async (req, res, next) => {
   }
 };
 
-// Soft Delete Event
 export const deleteEvent = async (req, res, next) => {
   const { id } = req.params;
 
   try {
-    const event = await prisma.event.update({
+    const event = await prisma.event.delete({
       where: { id },
-      data: {
-        is_deleted: true,
-        deleted_at: new Date(),
-      },
     });
 
     res.status(200).json({
@@ -218,6 +213,7 @@ export const deleteEvent = async (req, res, next) => {
     next(err);
   }
 };
+
 
 export const updateEventInfo = async (req, res, next) => {
   const { id } = req.params;
