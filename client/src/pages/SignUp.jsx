@@ -52,7 +52,7 @@ export default function SignUp({ className, ...props }) {
       });
 
       if (response.data) {
-        dispatch(signInSuccess(response.data));
+        dispatch(signInSuccess(response.data.user));
         navigate("/donors", { replace: true });
       }
     } catch (err) {

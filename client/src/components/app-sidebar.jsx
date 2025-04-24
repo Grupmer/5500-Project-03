@@ -16,6 +16,7 @@ export function AppSidebar() {
   const location = useLocation();
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state) => state.auth);
+  console.log("Current User:", currentUser);
   
   const menuItems = [
     {
