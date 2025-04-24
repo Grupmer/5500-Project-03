@@ -9,7 +9,6 @@ export const signUp = async (req, res, next) => {
     const { username, email, password } = req.body;
 
     try {
-        // Check if user with this email already exists
         const existingUser = await prisma.user.findUnique({
             where: { email },
         });
@@ -24,7 +23,21 @@ export const signUp = async (req, res, next) => {
             data: { username, email, password: hashedPassword },
         });
 
-        res.status(201).json({ message: "User created successfully", user: newUser });
+        const token = jwt.sign(
+            { id: newUser.id }, 
+            process.env.JWT_SECRET, 
+            { expiresIn: "7d" }
+        );
+
+        res.status(201).json({ 
+            message: "User created successfully", 
+            token, 
+            user: { 
+                id: newUser.id, 
+                username: newUser.username, 
+                email: newUser.email 
+            }
+        });
     } catch (error) {
         next(error);
     }
