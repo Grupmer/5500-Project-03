@@ -35,6 +35,7 @@ export default function LogIn({ className, ...props }) {
     dispatch(signInStart());
 
     try {
+      const { email, password } = formData;
       const response = await apiClient.post('/api/auth/login', { email, password });
     
       if (response.data.token) {
