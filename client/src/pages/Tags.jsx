@@ -37,6 +37,8 @@ export default function Tags() {
     color: '#6366f1'
   });
 
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   // 预定义颜色选项
   const colorOptions = [
     { value: '#6366f1', label: 'Indigo' },
@@ -54,7 +56,7 @@ export default function Tags() {
   const fetchTags = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/api/tag');
+      const response = await axios.get(`${API_BASE_URL}/api/tag`);
       if (response.data.tags) {
         setTags(response.data.tags);
       }
@@ -124,7 +126,7 @@ export default function Tags() {
     }
 
     try {
-      const response = await axios.post('/api/tag', formData);
+      const response = await axios.post(`${API_BASE_URL}/api/tag`, formData);
       if (response.data.success) {
         toast({
           title: "Success",

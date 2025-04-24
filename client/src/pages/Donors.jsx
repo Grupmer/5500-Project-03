@@ -27,6 +27,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; 
+
 export default function Donors() {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -99,7 +101,7 @@ export default function Donors() {
           filters.tags.map(tag => typeof tag === 'object' ? tag.value : tag);
       }
 
-      const response = await axios.get(`/api/donor`, { params });
+      const response = await axios.get(`${API_BASE_URL}/api/donor`, { params });
       setDonors(response.data.donors);
       setPagination(response.data.pagination);
 
@@ -234,7 +236,7 @@ export default function Donors() {
         for (let i = 0; i < selectedDonors.length; i += batchSize) {
           const batch = selectedDonors.slice(i, i + batchSize);
           const batchPromises = batch.map(id => 
-            axios.delete(`/api/donor/${id}`)
+            axios.delete(`${API_BASE_URL}/api/donor/${id}`)
               .then(() => successCount++)
               .catch(() => failureCount++)
           );
@@ -286,7 +288,7 @@ export default function Donors() {
       
       for (let i = 0; i < selectedDonors.length; i += batchSize) {
         const batch = selectedDonors.slice(i, i + batchSize);
-        const batchRequests = batch.map(id => axios.get(`/api/donor/${id}`));
+        const batchRequests = batch.map(id => axios.get(`${API_BASE_URL}/api/donor/${id}`));
         
         try {
           const results = await Promise.all(batchRequests);

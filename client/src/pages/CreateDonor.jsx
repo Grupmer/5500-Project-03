@@ -32,6 +32,8 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 export default function CreateDonor() {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -199,7 +201,7 @@ export default function CreateDonor() {
         tagIds,
       };
 
-      const response = await axios.post("/api/donor", processedData);
+      const response = await axios.post(`${API_BASE_URL}/api/donor`, processedData);
       
       toast({
         title: "Success",

@@ -39,6 +39,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { BarChart2 } from "lucide-react";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; 
+
 axios.defaults.withCredentials = true;
 
 export default function DonorDetails() {
@@ -63,7 +65,7 @@ export default function DonorDetails() {
   const fetchDonorDetails = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`/api/donor/${id}`, {
+      const response = await axios.get(`${API_BASE_URL}/api/donor/${id}`, {
         withCredentials: true
       });
       
@@ -214,7 +216,7 @@ export default function DonorDetails() {
 
       console.log('Sending update data:', updateData);
 
-      const response = await axios.put(`/api/donor/${id}`, updateData, {
+      const response = await axios.put(`${API_BASE_URL}/api/donor/${id}`, updateData, {
         withCredentials: true
       });
 
@@ -330,7 +332,7 @@ export default function DonorDetails() {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`/api/donor/${id}`, {
+      await axios.delete(`${API_BASE_URL}/api/donor/${id}`, {
         withCredentials: true,
       });
       

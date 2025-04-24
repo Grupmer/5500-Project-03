@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import EventCard from "@/components/EventCard";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 export default function Events() {
   const navigate = useNavigate();
   const [events, setEvents] = useState([]);
@@ -13,7 +15,7 @@ export default function Events() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch("/api/event");
+        const response = await fetch(`${API_BASE_URL}/api/event`);
         if (!response.ok) throw new Error("Failed to fetch events");
         const data = await response.json();
         setEvents(data.events || []);

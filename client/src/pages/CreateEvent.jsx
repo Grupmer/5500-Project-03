@@ -26,6 +26,7 @@ import DonorSelection from "@/components/DonorSelection";
 import CurrentDonorsList from "@/components/CurrentDonorsList";
 import ConfirmDialog from "@/components/ui/confirm-dialog";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function CreateEvent() {
   const navigate = useNavigate();
@@ -104,7 +105,7 @@ const [pendingSubmit, setPendingSubmit] = useState(false);
         })),
       };
   
-      const res = await axios.post("/api/event", eventData);
+      const res = await axios.post(`${API_BASE_URL}/api/event`, eventData);
       if (res.status === 200 || res.status === 201) {
         toast({ title: "Success", description: "Event created successfully!" });
         navigate("/events");

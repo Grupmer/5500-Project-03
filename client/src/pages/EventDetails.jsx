@@ -57,6 +57,8 @@ import AddCollaboratorModal from "@/components/AddCollaboratorModal";
 import EventHistoryPanel from "@/components/EventHistoryPanel";
 import { Textarea } from "@/components/ui/textarea";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 export default function EventDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -90,7 +92,7 @@ export default function EventDetails() {
   const fetchEventDetails = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/event/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/event/${id}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -137,7 +139,7 @@ export default function EventDetails() {
   const handleDelete = async () => {
     try {
       setDeleting(true);
-      const response = await fetch(`/api/event/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/event/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -208,7 +210,7 @@ export default function EventDetails() {
   const patchDonorStatus = async (donorId, status, reason = null) => {
     try {
       setSaving(true);
-      const response = await fetch(`/api/event/${id}/donor-status`, {
+      const response = await fetch(`${API_BASE_URL}/api/event/${id}/donor-status`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -840,7 +842,7 @@ export default function EventDetails() {
                 })
               );
 
-              const response = await fetch(`/api/event/${id}/edit-donors`, {
+              const response = await fetch(`${API_BASE_URL}/api/event/${id}/edit-donors`, {
                 method: "PATCH",
                 headers: {
                   "Content-Type": "application/json",
