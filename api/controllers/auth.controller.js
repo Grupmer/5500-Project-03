@@ -1,7 +1,7 @@
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
-import {errorHandler} from "../utils/error.js";
+import { errorHandler } from "../utils/error.js";
 
 const prisma = new PrismaClient();
 
@@ -18,7 +18,7 @@ export const signUp = async (req, res, next) => {
             return res.status(400).json({ message: "Email already in use. Please use a different email or login." });
         }
 
-        const hashedPassword = bcryptjs.hashSync(password, 10); 
+        const hashedPassword = bcryptjs.hashSync(password, 10);
 
         const newUser = await prisma.user.create({
             data: { username, email, password: hashedPassword },
@@ -44,12 +44,18 @@ export const logIn = async (req, res, next) => {
         if (!validPassword) return next(errorHandler(401, "Wrong credentials"));
 
         const token = jwt.sign({ id: validUser.id }, process.env.JWT_SECRET, {
-            expiresIn: "7d", 
+            expiresIn: "7d",
         });
 
         const { password: pass, ...rest } = validUser;
 
-        res.cookie("access_token", token, { httpOnly: true }).status(200).json(rest);
+        // ✅ 更新后的 Cookie 设置，支持跨域 & HTTPS
+        res.cookie("access_token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',  // 生产环境启用 HTTPS
+            sameSite: 'None'                                // 允许跨域携带 Cookie
+        }).status(200).json(rest);
+
     } catch (error) {
         next(error);
     }
