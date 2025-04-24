@@ -12,7 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import axios from "axios";
+import apiClient from "@/utils/apiClient";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { useToast } from "@/components/ui/toast";
 import { PlusCircle, User, Home, DollarSign, Mail, Tag } from "lucide-react";
@@ -32,7 +32,6 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function CreateDonor() {
   const navigate = useNavigate();
@@ -76,14 +75,8 @@ export default function CreateDonor() {
     const fetchTags = async () => {
       setLoadingTags(true);
       try {
-        const res = await fetch("/api/tag", {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        });
-
-        if (!res.ok) throw new Error("Failed to fetch tags");
-
-        const data = await res.json();
+        const res = await apiClient.get("/api/tag");
+        const data = res.data;
         setTags(data.tags.map((tag) => ({
           value: tag.id,
           label: tag.name,
@@ -137,12 +130,10 @@ export default function CreateDonor() {
     }
 
     try {
-      const res = await fetch("/api/tag", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: newTag.name, color: newTag.color }),
+      const res = await apiClient.post("/api/tag", {
+        name: newTag.name,
+        color: newTag.color,
       });
-
       if (!res.ok) throw new Error("Failed to create tag");
 
       const data = await res.json();
@@ -201,7 +192,7 @@ export default function CreateDonor() {
         tagIds,
       };
 
-      const response = await axios.post(`${API_BASE_URL}/api/donor`, processedData);
+      await apiClient.post("/api/donor", processedData);
       
       toast({
         title: "Success",

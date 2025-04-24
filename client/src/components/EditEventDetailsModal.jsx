@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import apiClient from "@/utils/apiClient";
 
 export default function EditEventDetailsModal({
   open,
@@ -49,21 +50,15 @@ export default function EditEventDetailsModal({
       setSaving(true);
       const fixedDate = new Date(`${formData.date}T12:00:00`);
 
-      const res = await fetch(`/api/event/${eventData.id}/info`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: formData.name,
-          description: formData.description,
-          date: fixedDate.toISOString(),
-          location: formData.location,
-          status: formData.status,
-          capacity: formData.capacity ? parseInt(formData.capacity) : null,
-          tagIds: formData.tags?.map((tag) => tag.value) || [],
-        }),
+      await apiClient.patch(`/api/event/${eventData.id}/info`, {
+        name: formData.name,
+        description: formData.description,
+        date: fixedDate.toISOString(),
+        location: formData.location,
+        status: formData.status,
+        capacity: formData.capacity ? parseInt(formData.capacity) : null,
+        tagIds: formData.tags?.map((tag) => tag.value) || [],
       });
-
-      if (!res.ok) throw new Error("Update failed");
 
       toast({
         title: "Success",

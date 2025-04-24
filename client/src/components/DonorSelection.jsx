@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import axios from "axios";
+import apiClient from "@/utils/apiClient";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -50,13 +50,13 @@ export default function DonorSelection({ selectedDonors, onChange, excludeDonors
   const fetchDonors = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await axios.get("/api/donor/recommend", {
+      
+      const response = await apiClient.get("/api/donor/recommend", {
         params: {
           count: recommendMode ? (targetDonorCount || 50) : undefined,
           search: debouncedSearch,
           sortBy: recommendMode ? sortOption : undefined,
-          ...recommendMode ? activeFilters : {},
-          // ✅ 排除已选中或传入的 donors
+          ...(recommendMode ? activeFilters : {}),
           excludeIds: [...selectedDonors, ...excludeDonors].map((d) => d.id).join(","),
         },
       });

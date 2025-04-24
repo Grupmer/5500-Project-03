@@ -1,8 +1,8 @@
 import React, { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import axios from "axios";
 import { useToast } from "@/components/ui/toast";
 import { FileText } from "lucide-react";
+import apiClient from "@/utils/apiClient";
 
 export default function DonorImportCsv({ onSuccess }) {
   const fileInputRef = useRef(null);
@@ -29,10 +29,10 @@ export default function DonorImportCsv({ onSuccess }) {
 
     try {
       setUploading(true);
-      const response = await axios.post("/api/donor/import/csv", formData, {
+      const response = await apiClient.post("/api/donor/import/csv", formData, {
         headers: { "Content-Type": "multipart/form-data" },
-        withCredentials: true,
       });
+    
 
       if (response.status === 200) {
         const { createdCount, updatedCount, errors } = response.data;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import apiClient from "@/utils/apiClient";
 import { useToast } from "@/components/ui/toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,8 +36,6 @@ export default function TagDetails() {
     description: "",
     color: "#6366f1"
   });
-
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   
   // 预定义颜色选项
   const colorOptions = [
@@ -59,7 +57,7 @@ export default function TagDetails() {
     const fetchTagDetails = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`${API_BASE_URL}/api/tag`);
+        const response = await apiClient.get("/api/tag");
         
         // 如果组件已经卸载，不继续执行
         if (!isMounted) return;
@@ -152,7 +150,7 @@ export default function TagDetails() {
     }
 
     try {
-      const response = await axios.patch(`${API_BASE_URL}/api/tag/${id}`, editedData);
+      const response = await apiClient.patch(`/api/tag/${id}`, editedData);
       
       if (response.data.success) {
         setTag(response.data.tag);
@@ -175,7 +173,7 @@ export default function TagDetails() {
   // 删除标签
   const handleDelete = async () => {
     try {
-      const response = await axios.delete(`${API_BASE_URL}/api/tag/${id}`);
+      const response = await apiClient.delete(`/api/tag/${id}`);
       
       if (response.data.success) {
         toast({

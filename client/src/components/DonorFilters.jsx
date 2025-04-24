@@ -3,7 +3,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { MultiSelect } from '@/components/ui/multi-select';
-import axios from 'axios';
+import apiClient from "@/utils/apiClient";
 import { ChevronUp, ChevronDown } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 
@@ -27,9 +27,7 @@ const DonorFilters = ({ onFilterChange, availableFilters = {} }) => {
   useEffect(() => {
     const fetchCities = async () => {
       try {
-        const response = await axios.get('/api/donor/cities', {
-          withCredentials: true
-        });
+        const response = await apiClient.get('/api/donor/cities');
         if (response.data) {
           setAvailableCities(response.data.cities);
         }
@@ -46,9 +44,7 @@ const DonorFilters = ({ onFilterChange, availableFilters = {} }) => {
     const fetchTags = async () => {
       try {
         setLoadingTags(true);
-        const response = await axios.get('/api/tag', {
-          withCredentials: true
-        });
+        const response = await apiClient.get('/api/tag');
         
         if (response.data && response.data.tags) {
           // Format tags for MultiSelect component

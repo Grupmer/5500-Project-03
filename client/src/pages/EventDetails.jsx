@@ -56,8 +56,7 @@ import AddDonorsModal from "@/components/AddDonorsModal";
 import AddCollaboratorModal from "@/components/AddCollaboratorModal";
 import EventHistoryPanel from "@/components/EventHistoryPanel";
 import { Textarea } from "@/components/ui/textarea";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import apiClient from "@/utils/apiClient";
 
 export default function EventDetails() {
   const { id } = useParams();
@@ -92,22 +91,14 @@ export default function EventDetails() {
   const fetchEventDetails = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_BASE_URL}/api/event/${id}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch event details");
-      }
-
-      const data = await response.json();
+  
+      const response = await apiClient.get(`/api/event/${id}`);
+      const data = response.data;
+  
       setEvent(data.event);
       setIsEventOwner(data.isEventOwner);
       setCanEdit(data.isEventOwner || data.isEventCollaborator);
-
+  
       setFormData({
         donors: data.event.donors.map((donorEvent) => ({
           value: donorEvent.donor_id,
@@ -123,6 +114,7 @@ export default function EventDetails() {
           color: tag.color,
         })),
       });
+  
     } catch (err) {
       console.error("Error fetching event details:", err);
       setError("Failed to load event details. Please try again.");
@@ -135,21 +127,14 @@ export default function EventDetails() {
       setLoading(false);
     }
   };
+  
 
   const handleDelete = async () => {
     try {
       setDeleting(true);
-      const response = await fetch(`${API_BASE_URL}/api/event/${id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to delete event");
-      }
-
+  
+      await apiClient.delete(`/api/event/${id}`);
+  
       toast({
         title: "Success",
         description: "Event deleted successfully",
@@ -167,6 +152,7 @@ export default function EventDetails() {
       setDeleteDialog(false);
     }
   };
+  
 
   const getStatusBadge = (status) => {
     switch (status) {
@@ -210,27 +196,31 @@ export default function EventDetails() {
   const patchDonorStatus = async (donorId, status, reason = null) => {
     try {
       setSaving(true);
-      const response = await fetch(`${API_BASE_URL}/api/event/${id}/donor-status`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          donorId,
-          status,
-          ...(status === "declined" && reason ? { declineReason: reason } : {}),
-        }),
+  
+      await apiClient.patch(`/api/event/${id}/donor-status`, {
+        donorId,
+        status,
+        ...(status === "declined" && reason ? { declineReason: reason } : {}),
       });
-
-      if (!response.ok) throw new Error("Failed to update donor status");
-
-      toast({ title: "Status updated", description: "Donor status updated" });
+  
+      toast({
+        title: "Status updated",
+        description: "Donor status updated",
+      });
+  
       fetchEventDetails();
     } catch (err) {
       console.error(err);
-      toast({ title: "Error", description: "Failed to update", variant: "destructive" });
+      toast({
+        title: "Error",
+        description: "Failed to update",
+        variant: "destructive",
+      });
     } finally {
       setSaving(false);
     }
   };
+  
 
   if (loading) {
     return (
@@ -827,13 +817,13 @@ export default function EventDetails() {
           const updateDonors = async () => {
             try {
               setLoading(true);
-
+          
               const payload = [];
-
+          
               donorsToRemove.forEach((id) =>
                 payload.push({ donorId: id, action: "remove" })
               );
-
+          
               donorsToAdd.forEach((donor) =>
                 payload.push({
                   donorId: donor.id,
@@ -841,22 +831,16 @@ export default function EventDetails() {
                   status: donor.status || "invited",
                 })
               );
-
-              const response = await fetch(`${API_BASE_URL}/api/event/${id}/edit-donors`, {
-                method: "PATCH",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ donors: payload }),
+          
+              await apiClient.patch(`/api/event/${id}/edit-donors`, {
+                donors: payload,
               });
-
-              if (!response.ok) throw new Error("Failed to update donors");
-
+          
               toast({
                 title: "Success",
                 description: "Donors updated successfully.",
               });
-
+          
               fetchEventDetails(); // Refresh page
             } catch (error) {
               console.error("Error updating donors:", error);
@@ -869,8 +853,9 @@ export default function EventDetails() {
               setLoading(false);
             }
           };
-
+          
           updateDonors();
+          
         }}
         existingDonors={event.donors.map((d) => ({
           id: d.donor_id,

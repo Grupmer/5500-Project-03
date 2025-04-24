@@ -21,6 +21,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/components/ui/toast";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useSelector } from "react-redux";
+import apiClient from "@/utils/apiClient";
 
 export default function AddCollaboratorModal({
   open,
@@ -43,9 +44,8 @@ export default function AddCollaboratorModal({
     if (!open) return;
     const fetchExisting = async () => {
       try {
-        const res = await fetch(`/api/event/${eventId}/collaborators`);
-        if (!res.ok) throw new Error("Failed to fetch collaborators");
-        const data = await res.json();
+        const res = await apiClient.get(`/api/event/${eventId}/collaborators`);
+        const data = res.data;
         setExistingCollaborators(data.collaborators);
         setAddedUsers([]);
         setRemovedUsers([]);
@@ -68,9 +68,10 @@ export default function AddCollaboratorModal({
       }
       setIsLoading(true);
       try {
-        const res = await fetch(`/api/user/search?query=${searchQuery}`);
-        if (!res.ok) throw new Error("Search failed");
-        const data = await res.json();
+        const res = await apiClient.get(`/api/user/search`, {
+          params: { query: searchQuery },
+        });
+        const data = res.data;
         const filtered = data.filter(
           (u) =>
             u.id !== currentUserId && // user should not be able to add themselves
@@ -110,15 +111,10 @@ export default function AddCollaboratorModal({
 
     setIsLoading(true);
     try {
-      const res = await fetch(`/api/event/${eventId}/update-collaborators`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          addIds: addedUsers.map((u) => u.id),
-          removeIds: removedUsers.map((u) => u.id),
-        }),
+      await apiClient.post(`/api/event/${eventId}/update-collaborators`, {
+        addIds: addedUsers.map((u) => u.id),
+        removeIds: removedUsers.map((u) => u.id),
       });
-      if (!res.ok) throw new Error("Update failed");
 
       toast({
         title: "Success",

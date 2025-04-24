@@ -6,6 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/toast";
 import { format, formatDistanceToNow } from "date-fns";
 import { Clock, AlertCircle } from "lucide-react";
+import apiClient from "@/utils/apiClient";
 
 export default function EventHistoryPanel({ eventId }) {
   const [history, setHistory] = useState([]);
@@ -16,13 +17,8 @@ export default function EventHistoryPanel({ eventId }) {
     const fetchHistory = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/event/${eventId}/history`);
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch event history");
-        }
-
-        const data = await response.json();
+        const response = await apiClient.get(`/api/event/${eventId}/history`);
+        const data = response.data;
         setHistory(data.history || []);
       } catch (error) {
         console.error("Error fetching event history:", error);

@@ -3,8 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import EventCard from "@/components/EventCard";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import apiClient from "@/utils/apiClient";
 
 export default function Events() {
   const navigate = useNavigate();
@@ -15,20 +14,21 @@ export default function Events() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/event`);
-        if (!response.ok) throw new Error("Failed to fetch events");
-        const data = await response.json();
+        const response = await apiClient.get("/api/event");
+        const data = response.data;
+  
         setEvents(data.events || []);
       } catch (err) {
         console.error("Error fetching events:", err);
-        setError(err.message);
+        setError("Failed to fetch events");
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchEvents();
   }, []);
+  
 
   return (
     <div className="space-y-6">

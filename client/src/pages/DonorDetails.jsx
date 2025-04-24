@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/toast";
-import axios from "axios";
+import apiClient from "@/utils/apiClient";
 import { format } from "date-fns";
 import { 
   User, 
@@ -39,8 +39,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { BarChart2 } from "lucide-react";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; 
-
 axios.defaults.withCredentials = true;
 
 export default function DonorDetails() {
@@ -65,9 +63,7 @@ export default function DonorDetails() {
   const fetchDonorDetails = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${API_BASE_URL}/api/donor/${id}`, {
-        withCredentials: true
-      });
+      const response = await apiClient.get(`/api/donor/${id}`);
       
       const donorData = response.data;
       setDonor(donorData);
@@ -97,9 +93,7 @@ export default function DonorDetails() {
   const fetchAllTags = async () => {
     setLoadingTags(true);
     try {
-      const response = await axios.get("/api/tag", {
-        withCredentials: true
-      });
+      const response = await apiClient.get("/api/tag");
       
       const tagsData = response.data.tags.map(tag => ({
         value: tag.id,
@@ -131,11 +125,9 @@ export default function DonorDetails() {
     }
 
     try {
-      const response = await axios.post("/api/tag", {
+      const response = await apiClient.post("/api/tag", {
         name: newTag.name,
         color: newTag.color
-      }, {
-        withCredentials: true
       });
 
       const createdTag = {
@@ -216,9 +208,7 @@ export default function DonorDetails() {
 
       console.log('Sending update data:', updateData);
 
-      const response = await axios.put(`${API_BASE_URL}/api/donor/${id}`, updateData, {
-        withCredentials: true
-      });
+      const response = await apiClient.put(`/api/donor/${id}`, updateData);
 
       if (response.data.success) {
         // 重新获取最新数据
@@ -332,9 +322,7 @@ export default function DonorDetails() {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`${API_BASE_URL}/api/donor/${id}`, {
-        withCredentials: true,
-      });
+      await apiClient.delete(`/api/donor/${id}`);
       
       toast({
         title: "Success",

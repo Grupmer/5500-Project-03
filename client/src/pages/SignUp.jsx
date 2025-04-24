@@ -8,10 +8,7 @@ import { Label } from "@/components/ui/label";
 import { FaCircleExclamation } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
 import { signInStart, signInSuccess, signInFailure } from "../redux/auth/authSlice";
-import axios from "axios";
-
-// 导入环境变量
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import apiClient from "@/utils/apiClient";
 
 export default function SignUp({ className, ...props }) {
   const navigate = useNavigate();
@@ -46,15 +43,12 @@ export default function SignUp({ className, ...props }) {
     dispatch(signInStart());
 
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/auth/signup`, { // <-- 修改这里
-      // const response = await axios.post("/api/auth/signup", {
+      const response = await apiClient.post("/api/auth/signup", {
         username: formData.name,
         email: formData.email,
         password: formData.password,
-      }, {
-        withCredentials: true
       });
-
+    
       if (response.data) {
         dispatch(signInSuccess(response.data));
         navigate("/donors", { replace: true });
@@ -63,6 +57,7 @@ export default function SignUp({ className, ...props }) {
       dispatch(signInFailure(err.response?.data?.message || err.message));
       setError(err.response?.data?.message || err.message);
     }
+    
   };
 
   return (
