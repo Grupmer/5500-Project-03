@@ -5,3 +5,4 @@ node_modules
 prisma/seed_data.json
 prisma/seed.js
 donors_ml_separated_labels.csv
+prisma/seed_donor_tags.js
