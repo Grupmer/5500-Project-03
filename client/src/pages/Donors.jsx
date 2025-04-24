@@ -99,7 +99,7 @@ export default function Donors() {
           filters.tags.map(tag => typeof tag === 'object' ? tag.value : tag);
       }
 
-      const response = await apiClient.get('/donor', { params });
+      const response = await apiClient.get('/api/donor', { params });
 
       setDonors(response.data.donors);
       setPagination(response.data.pagination);
@@ -235,7 +235,7 @@ export default function Donors() {
         for (let i = 0; i < selectedDonors.length; i += batchSize) {
           const batch = selectedDonors.slice(i, i + batchSize);
           const batchPromises = batch.map(id => 
-            apiClient.delete(`/donor/${id}`)
+            apiClient.delete(`/api/donor/${id}`)
               .then(() => successCount++)
               .catch(() => failureCount++)
           );
@@ -287,7 +287,7 @@ export default function Donors() {
       
       for (let i = 0; i < selectedDonors.length; i += batchSize) {
         const batch = selectedDonors.slice(i, i + batchSize);
-        const batchRequests = batch.map(id => apiClient.get(`/donor/${id}`));
+        const batchRequests = batch.map(id => apiClient.get(`/api/donor/${id}`));
 
         
         try {
