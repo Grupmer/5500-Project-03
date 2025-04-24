@@ -19,12 +19,8 @@ app.use(cors({
   origin: process.env.NODE_ENV === "production" 
     ? "https://five500-project-03-1.onrender.com"
     : "http://localhost:5173",
-  methods: "GET, POST, PUT, DELETE, OPTIONS",
-  credentials: true,
+  methods: "GET, POST, PUT, DELETE, PATCH, OPTIONS",
 }));
-
-app.options('*', cors());
-
 
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, "0.0.0.0", () => {

@@ -5,25 +5,22 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export const verifyToken = (req, res, next) => {
-    // get the token from the cookies
-    const token = req.cookies.access_token;
+  const authHeader = req.headers.authorization;
 
-    //if token is missing, return an error
-    if (!token) {
-        return next(errorHandler(401, 'Unauthorized'));
-    }
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return next(errorHandler(401, 'Unauthorized - No token provided'));
+  }
 
-    // verify the token with the secret key
-    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-        if (err) {
-            return next(errorHandler(403, 'Forbidden'));
-        }
+  const token = authHeader.split(' ')[1]; 
 
-        // set the user in the request object so it can be accessed in the next middleware
-        req.user = user;
-        console.log(user);
-        next();
-    });
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+      if (err) {
+          return next(errorHandler(403, 'Forbidden - Invalid token'));
+      }
+
+      req.user = user; 
+      next();
+  });
 };
 
 export const verifyEventOwnership = async (req, res, next) => {

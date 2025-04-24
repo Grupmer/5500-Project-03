@@ -8,10 +8,7 @@ import { Label } from "@/components/ui/label";
 import { FaCircleExclamation } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
 import { signInStart, signInSuccess, signInFailure } from "../redux/auth/authSlice";
-import axios from "axios";
-
-// 导入环境变量
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { apiClient } from "@/utils/axios";
 
 export default function LogIn({ className, ...props }) {
   const navigate = useNavigate();
@@ -38,24 +35,29 @@ export default function LogIn({ className, ...props }) {
     dispatch(signInStart());
 
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/auth/login`, { // <-- 修改这里
-      // const response = await axios.post("/api/auth/login", {
-        email: formData.email,
-        password: formData.password,
-      }, {
-        withCredentials: true
-      });
-
-      console.log("Login API Response:", response.data);
-
-      if (response.data) {
-        dispatch(signInSuccess(response.data));
-        navigate("/donors", { replace: true });
+      const response = await apiClient.post('/api/auth/login', { email, password });
+    
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token);
+      } else {
+        throw new Error("No token received from server.");
       }
+    
+      console.log("Login API Response:", response.data);
+    
+      if (response.data.user) {
+        dispatch(signInSuccess(response.data.user));
+        navigate("/donors", { replace: true });
+      } else {
+        throw new Error("Invalid login response.");
+      }
+    
     } catch (err) {
+      console.error("Login Error:", err);
       dispatch(signInFailure(err.response?.data?.message || err.message));
-      setError(err.response?.data?.message || err.message);
+      setError(err.response?.data?.message || "Login failed. Please try again.");
     }
+    
   };
 
   return (
